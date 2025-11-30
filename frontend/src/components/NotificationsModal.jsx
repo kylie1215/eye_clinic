@@ -18,6 +18,7 @@ export default function NotificationsModal({ isOpen, onClose }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all'); // all, unread, read
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, notificationId: null, resolve: null });
 
   useEffect(() => {
     if (isOpen) {
@@ -65,7 +66,9 @@ export default function NotificationsModal({ isOpen, onClose }) {
   };
 
   const deleteNotification = async (notificationId) => {
-    if (!confirm('Are you sure you want to delete this notification?')) return;
+    // Show custom confirmation modal instead of browser alert
+    const confirmed = await showConfirmDialog(notificationId);
+    if (!confirmed) return;
     
     try {
       await api.delete(`/api/notifications/${notificationId}`);
@@ -74,6 +77,12 @@ export default function NotificationsModal({ isOpen, onClose }) {
     } catch (error) {
       toast.error('Failed to delete notification');
     }
+  };
+
+  const showConfirmDialog = (notificationId) => {
+    return new Promise((resolve) => {
+      setDeleteConfirm({ show: true, notificationId, resolve });
+    });
   };
 
   const getIcon = (type) => {
@@ -291,6 +300,79 @@ export default function NotificationsModal({ isOpen, onClose }) {
             </Transition.Child>
           </div>
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <Transition appear show={deleteConfirm.show} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-[60]"
+            onClose={() => {
+              deleteConfirm.resolve?.(false);
+              setDeleteConfirm({ show: false, notificationId: null, resolve: null });
+            }}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black bg-opacity-50" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+                    <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+                      <TrashIcon className="h-6 w-6 text-red-600" />
+                    </div>
+                    
+                    <Dialog.Title className="text-lg font-semibold text-gray-900 text-center mb-2">
+                      Delete Notification
+                    </Dialog.Title>
+                    
+                    <p className="text-sm text-gray-600 text-center mb-6">
+                      Are you sure you want to delete this notification? This action cannot be undone.
+                    </p>
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          deleteConfirm.resolve?.(false);
+                          setDeleteConfirm({ show: false, notificationId: null, resolve: null });
+                        }}
+                        className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          deleteConfirm.resolve?.(true);
+                          setDeleteConfirm({ show: false, notificationId: null, resolve: null });
+                        }}
+                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
       </Dialog>
     </Transition>
   );
