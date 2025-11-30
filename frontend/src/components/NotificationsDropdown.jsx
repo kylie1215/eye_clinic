@@ -179,7 +179,10 @@ export default function NotificationsDropdown() {
           {notifications.length > 0 && (
             <div className="px-4 py-3 border-t border-gray-200 text-center">
               <button 
-                onClick={() => navigate(`/${user?.role}/notifications`)}
+                onClick={() => {
+                  // Open modal by dispatching a custom event
+                  window.dispatchEvent(new CustomEvent('openNotificationsModal'));
+                }}
                 className="text-sm text-[#1ABC9C] hover:text-[#16A085] font-medium transition-colors"
               >
                 View all notifications

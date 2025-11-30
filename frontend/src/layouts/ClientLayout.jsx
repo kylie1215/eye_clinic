@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import NotificationsModal from '../components/NotificationsModal';
 import {
   HomeIcon,
   CalendarIcon,
@@ -13,6 +14,13 @@ import {
 
 export default function ClientLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenModal = () => setNotificationsModalOpen(true);
+    window.addEventListener('openNotificationsModal', handleOpenModal);
+    return () => window.removeEventListener('openNotificationsModal', handleOpenModal);
+  }, []);
 
   const menuItems = [
     { path: '/client/dashboard', label: 'Dashboard', icon: <HomeIcon className="h-5 w-5" /> },
@@ -41,6 +49,11 @@ export default function ClientLayout() {
           <Outlet />
         </main>
       </div>
+
+      <NotificationsModal 
+        isOpen={notificationsModalOpen} 
+        onClose={() => setNotificationsModalOpen(false)} 
+      />
     </div>
   );
 }
