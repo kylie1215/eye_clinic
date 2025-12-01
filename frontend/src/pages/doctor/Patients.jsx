@@ -13,13 +13,15 @@ import {
   EyeIcon,
   PencilIcon
 } from '@heroicons/react/24/outline';
-import { doctorAPI } from '../../api';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../api/axios';
 import toast from 'react-hot-toast';
 
 export default function DoctorPatients() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchPatients();
@@ -27,8 +29,9 @@ export default function DoctorPatients() {
 
   const fetchPatients = async () => {
     try {
-      const response = await doctorAPI.getPatients();
-      setPatients(response.data);
+      setLoading(true);
+      const response = await api.get('/api/doctor/patients');
+      setPatients(response.data.data || response.data || []);
     } catch (error) {
       toast.error('Failed to load patients');
     } finally {
