@@ -100,9 +100,9 @@ export default function AdminOrders() {
     }
   };
 
-  const filteredOrders = orders.filter(order =>
+  const filteredOrders = orders.filter((order) =>
     order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    order.client?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getStatusColor = (status) => {
@@ -211,8 +211,8 @@ export default function AdminOrders() {
                       </td>
                       <td className="py-4 px-4">
                         <div>
-                          <p className="font-medium text-gray-900">{order.user?.name || 'N/A'}</p>
-                          <p className="text-sm text-gray-500">{order.user?.email || ''}</p>
+                          <p className="font-medium text-gray-900">{order.client?.name || 'N/A'}</p>
+                          <p className="text-sm text-gray-500">{order.client?.email || ''}</p>
                         </div>
                       </td>
                       <td className="py-4 px-4 text-gray-600">
@@ -293,8 +293,8 @@ export default function AdminOrders() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Customer</p>
-                <p className="font-semibold text-gray-900">{selectedOrder.user?.name}</p>
-                <p className="text-sm text-gray-500">{selectedOrder.user?.email}</p>
+                <p className="font-semibold text-gray-900">{selectedOrder.client?.name}</p>
+                <p className="text-sm text-gray-500">{selectedOrder.client?.email}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total Amount</p>

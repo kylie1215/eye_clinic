@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['user:id,name,email']);
+        $query = Order::with(['client:id,name,email', 'items.product']);
 
         if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -23,7 +23,7 @@ class OrderController extends Controller
         if ($request->has('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('order_number', 'like', "%{$request->search}%")
-                  ->orWhereHas('user', function ($q) use ($request) {
+                  ->orWhereHas('client', function ($q) use ($request) {
                       $q->where('name', 'like', "%{$request->search}%");
                   });
             });
@@ -36,7 +36,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user:id,name,email']);
+        $order->load(['client:id,name,email,phone,address', 'items.product']);
 
         return response()->json($order);
     }
