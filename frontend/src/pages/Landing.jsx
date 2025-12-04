@@ -211,6 +211,15 @@ export default function Landing() {
         size="sm"
       >
         <form onSubmit={handleLogin} className="space-y-4">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1ABC9C] to-[#16A085] rounded-full mb-3">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-[#2C3E50]">Eye Clinic</h2>
+          </div>
           <Input
             label="Email Address"
             type="email"
@@ -237,14 +246,9 @@ export default function Landing() {
             <p className="mt-2"><strong>Password:</strong> password</p>
           </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="secondary" onClick={() => setShowLoginModal(false)} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" loading={loginLoading} className="flex-1">
-              Sign In
-            </Button>
-          </div>
+          <Button type="submit" loading={loginLoading} className="w-full">
+            Sign In
+          </Button>
 
           <p className="text-center text-sm text-gray-600">
             Don't have an account?{' '}
@@ -270,6 +274,15 @@ export default function Landing() {
         size="lg"
       >
         <form onSubmit={handleRegister} className="space-y-4">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1ABC9C] to-[#16A085] rounded-full mb-3">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-[#2C3E50]">Eye Clinic</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Full Name"
@@ -333,14 +346,9 @@ export default function Landing() {
             />
           </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="secondary" onClick={() => setShowRegisterModal(false)} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" loading={registerLoading} className="flex-1">
-              Create Account
-            </Button>
-          </div>
+          <Button type="submit" loading={registerLoading} className="w-full">
+            Create Account
+          </Button>
 
           <p className="text-center text-sm text-gray-600">
             Already have an account?{' '}
