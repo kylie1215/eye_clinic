@@ -10,10 +10,23 @@ import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import ConfirmDialog from './ConfirmDialog';
 import NotificationsDropdown from './NotificationsDropdown';
+import ProfileModal from './ProfileModal';
 
 export default function Navbar({ title, onMenuClick }) {
   const { user, logout } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
+  const getProfileImageUrl = () => {
+    if (user?.profile_picture) {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      if (user.profile_picture.startsWith('http')) {
+        return user.profile_picture;
+      }
+      return `${API_URL.replace('/api', '')}/storage/${user.profile_picture}`;
+    }
+    return null;
+  };
 
   return (
     <nav className="bg-white shadow-lg px-6 py-4 border-b border-gray-100 animate-fade-in-down relative z-50">
@@ -33,7 +46,15 @@ export default function Navbar({ title, onMenuClick }) {
 
           <Menu as="div" className="relative">
             <Menu.Button className="flex items-center gap-2 text-gray-700 hover:text-[#2C3E50] transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#1ABC9C] focus:ring-offset-2 rounded-lg px-2 py-1">
-              <UserCircleIcon className="h-8 w-8" />
+              {getProfileImageUrl() ? (
+                <img
+                  src={getProfileImageUrl()}
+                  alt={user?.name}
+                  className="h-8 w-8 rounded-full object-cover border-2 border-[#1ABC9C]"
+                />
+              ) : (
+                <UserCircleIcon className="h-8 w-8" />
+              )}
               <span className="hidden md:block font-medium">{user?.name}</span>
             </Menu.Button>
 
@@ -50,15 +71,15 @@ export default function Navbar({ title, onMenuClick }) {
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
-                      <Link
-                        to={`/${user?.role}/profile`}
+                      <button
+                        onClick={() => setShowProfileModal(true)}
                         className={`${
                           active ? 'bg-gray-100' : ''
-                        } flex items-center px-4 py-2 text-sm text-gray-700`}
+                        } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                       >
                         <UserCircleIcon className="h-5 w-5 mr-2" />
                         Profile
-                      </Link>
+                      </button>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -80,6 +101,11 @@ export default function Navbar({ title, onMenuClick }) {
           </Menu>
         </div>
       </div>
+
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+      />
 
       <ConfirmDialog
         isOpen={showLogoutConfirm}

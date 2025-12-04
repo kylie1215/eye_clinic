@@ -39,6 +39,7 @@ import ClientShop from './pages/client/Shop';
 import ClientCart from './pages/client/Cart';
 import ClientOrders from './pages/client/Orders';
 import ClientPrescriptions from './pages/client/Prescriptions';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
             <Route path="appointments" element={<AdminAppointments />} />
             <Route path="reports" element={<AdminReports />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Doctor Routes */}
@@ -87,6 +89,7 @@ function App() {
             <Route path="prescriptions" element={<DoctorPrescriptions />} />
             <Route path="schedule" element={<DoctorSchedule />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Client Routes */}
@@ -105,6 +108,7 @@ function App() {
             <Route path="orders" element={<ClientOrders />} />
             <Route path="prescriptions" element={<ClientPrescriptions />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Default Route */}
