@@ -16,6 +16,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     
+    // Profile routes
+    Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
+    Route::post('/profile/picture', [App\Http\Controllers\ProfileController::class, 'updatePicture']);
+    Route::delete('/profile/picture', [App\Http\Controllers\ProfileController::class, 'deletePicture']);
+    
     Route::get('/notifications', function (Request $request) {
         return $request->user()->notifications()
             ->orderBy('created_at', 'desc')

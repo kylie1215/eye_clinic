@@ -16,29 +16,45 @@ class ReportController extends Controller
     {
         try {
             // Revenue statistics
-            $totalRevenue = Order::where('payment_status', 'paid')->sum('total_amount') ?? 0;
+            $totalRevenue = Order::where('payment_status', 'paid')->sum('total') ?? 0;
             $monthlyRevenue = Order::where('payment_status', 'paid')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
-                ->sum('total_amount') ?? 0;
+                ->sum('total') ?? 0;
             $yearlyRevenue = Order::where('payment_status', 'paid')
                 ->whereYear('created_at', now()->year)
-                ->sum('total_amount') ?? 0;
+                ->sum('total') ?? 0;
 
             // Monthly revenue chart data
             $monthlyRevenueData = Order::where('payment_status', 'paid')
                 ->whereYear('created_at', now()->year)
                 ->select(
                     DB::raw('MONTH(created_at) as month'),
-                    DB::raw('SUM(total_amount) as revenue')
+                    DB::raw('SUM(total) as revenue')
                 )
                 ->groupBy('month')
                 ->orderBy('month')
                 ->get();
 
-            // Top selling products
-            $topProducts = Product::where('is_active', true)
-                ->orderBy('created_at', 'desc')
+            // Top selling products based on order items
+            $topProducts = DB::table('products')
+                ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+                ->leftJoin('orders', function($join) {
+                    $join->on('order_items.order_id', '=', 'orders.id')
+                         ->where('orders.payment_status', '=', 'paid');
+                })
+                ->select(
+                    'products.id',
+                    'products.name',
+                    'products.category',
+                    'products.price',
+                    'products.stock',
+                    DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'),
+                    DB::raw('COALESCE(SUM(order_items.total_price), 0) as total_revenue')
+                )
+                ->where('products.is_active', true)
+                ->groupBy('products.id', 'products.name', 'products.category', 'products.price', 'products.stock')
+                ->orderBy('total_sold', 'desc')
                 ->take(10)
                 ->get();
 

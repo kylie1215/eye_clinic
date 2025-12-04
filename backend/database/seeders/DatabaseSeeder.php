@@ -202,11 +202,78 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
+        $createdProducts = [];
         foreach ($products as $productData) {
-            Product::firstOrCreate(
+            $product = Product::firstOrCreate(
                 ['sku' => $productData['sku']],
                 array_merge($productData, ['is_active' => true])
             );
+            $createdProducts[] = $product;
+        }
+
+        // Create Sample Orders for reporting
+        $clientUsers = User::where('role', 'client')->get();
+        if ($clientUsers->count() > 0 && count($createdProducts) > 0) {
+            $statuses = ['pending', 'processing', 'delivered'];
+            $paymentStatuses = ['pending', 'paid'];
+            
+            // Create 20 sample orders
+            for ($i = 0; $i < 20; $i++) {
+                $client = $clientUsers->random();
+                $status = $statuses[array_rand($statuses)];
+                $paymentStatus = $status === 'delivered' ? 'paid' : $paymentStatuses[array_rand($paymentStatuses)];
+                
+                // Random date within last 6 months
+                $createdDate = now()->subDays(rand(0, 180));
+                
+                $order = \App\Models\Order::create([
+                    'client_id' => $client->id,
+                    'order_number' => 'ORD-' . date('Y') . '-' . str_pad($i + 1, 5, '0', STR_PAD_LEFT),
+                    'status' => $status,
+                    'payment_status' => $paymentStatus,
+                    'subtotal' => 0, // Will calculate
+                    'tax' => 0,
+                    'shipping_fee' => 150.00,
+                    'total' => 0, // Will calculate
+                    'shipping_address' => $client->address ?? '123 Main Street',
+                    'shipping_city' => 'Manila',
+                    'shipping_postal_code' => '1000',
+                    'contact_phone' => $client->phone ?? '+63 912 345 6789',
+                    'notes' => $i % 3 === 0 ? 'Sample order for testing' : null,
+                    'paid_at' => $paymentStatus === 'paid' ? $createdDate : null,
+                    'created_at' => $createdDate,
+                    'updated_at' => $createdDate,
+                ]);
+                
+                // Add 1-3 random products to order
+                $numItems = rand(1, 3);
+                $totalAmount = 0;
+                
+                for ($j = 0; $j < $numItems; $j++) {
+                    $product = $createdProducts[array_rand($createdProducts)];
+                    $quantity = rand(1, 3);
+                    $unitPrice = $product->price;
+                    $totalPrice = $unitPrice * $quantity;
+                    
+                    \App\Models\OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'quantity' => $quantity,
+                        'unit_price' => $unitPrice,
+                        'total_price' => $totalPrice,
+                    ]);
+                    
+                    $totalAmount += $totalPrice;
+                }
+                
+                // Update order totals
+                $order->update([
+                    'subtotal' => $totalAmount,
+                    'total' => $totalAmount + 150.00 // Add shipping fee
+                ]);
+            }
+            
+            $this->command->info('Created 20 sample orders with items');
         }
 
         $this->command->info('Database seeding completed successfully!');
