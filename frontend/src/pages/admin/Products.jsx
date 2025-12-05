@@ -187,7 +187,7 @@ export default function AdminProducts() {
                     src={product.image_url} 
                     alt={product.name}
                     className="w-full h-40 object-cover rounded-lg mb-3 transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'}
+                    onError={(e) => e.target.src = 'https://placehold.co/300x200?text=No+Image'}
                   />
                 ) : (
                   <div className="w-full h-40 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">

@@ -39,7 +39,7 @@ export default function ClientCart() {
         description: 'Reduce eye strain from digital screens',
         price: 1800,
         quantity: 1,
-        image: 'https://via.placeholder.com/100x100/10B981/FFFFFF?text=Blue+Light',
+        image: 'https://placehold.co/100x100/10B981/FFFFFF?text=Blue+Light',
         stock: 25
       },
       {
@@ -49,7 +49,7 @@ export default function ClientCart() {
         description: 'Comfortable all-day wear, 6 pack',
         price: 1200,
         quantity: 2,
-        image: 'https://via.placeholder.com/100x100/8B5CF6/FFFFFF?text=Contacts',
+        image: 'https://placehold.co/100x100/8B5CF6/FFFFFF?text=Contacts',
         stock: 50
       },
       {
@@ -59,7 +59,7 @@ export default function ClientCart() {
         description: 'Timeless aviator design with UV protection',
         price: 2500,
         quantity: 1,
-        image: 'https://via.placeholder.com/100x100/3B82F6/FFFFFF?text=Aviator',
+        image: 'https://placehold.co/100x100/3B82F6/FFFFFF?text=Aviator',
         stock: 15
       },
     ];

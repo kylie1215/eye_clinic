@@ -188,7 +188,7 @@ export default function ClientShop() {
                       alt={product.name}
                       className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=' + product.name.split(' ')[0];
+                        e.target.src = 'https://placehold.co/400x300/3B82F6/FFFFFF?text=' + product.name.split(' ')[0];
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
