@@ -27,9 +27,24 @@ export default function DoctorDashboard() {
   const fetchDashboard = async () => {
     try {
       const response = await doctorAPI.getDashboard();
+      console.log('Doctor Dashboard API Response:', response);
+      console.log('Doctor Dashboard data:', response.data);
+      console.log('Doctor Stats:', response.data.stats);
       setStats(response.data);
     } catch (error) {
+      console.error('Doctor Dashboard error:', error);
       toast.error('Failed to load dashboard');
+      // Set default empty stats
+      setStats({
+        stats: {
+          today_appointments: 0,
+          pending_appointments: 0,
+          total_patients: 0,
+          prescriptions_issued: 0,
+        },
+        todayAppointments: [],
+        upcomingAppointments: []
+      });
     } finally {
       setLoading(false);
     }
@@ -40,35 +55,35 @@ export default function DoctorDashboard() {
   const statCards = [
     { 
       label: 'Today\'s Appointments', 
-      value: stats?.todayAppointments || 0, 
+      value: stats?.stats?.today_appointments || 0,
+      subtitle: `${stats?.todayAppointments?.length || 0} scheduled`,
       icon: CalendarIcon, 
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
-      trend: '+12%',
       link: '/doctor/appointments'
     },
     { 
       label: 'Total Patients', 
-      value: stats?.totalPatients || 0, 
+      value: stats?.stats?.total_patients || 0,
+      subtitle: 'Unique patients',
       icon: UsersIcon, 
       color: 'bg-gradient-to-br from-green-500 to-green-600',
-      trend: '+8%',
       link: '/doctor/patients'
     },
     { 
-      label: 'Pending Prescriptions', 
-      value: stats?.pendingPrescriptions || 0, 
-      icon: ClipboardDocumentCheckIcon, 
-      color: 'bg-gradient-to-br from-purple-500 to-purple-600',
-      trend: '+5%',
-      link: '/doctor/prescriptions'
+      label: 'Pending Appointments', 
+      value: stats?.stats?.pending_appointments || 0,
+      subtitle: 'Awaiting confirmation',
+      icon: ClockIcon, 
+      color: 'bg-gradient-to-br from-orange-500 to-orange-600',
+      link: '/doctor/appointments'
     },
     { 
-      label: 'Completed Today', 
-      value: stats?.completedToday || 0, 
-      icon: CheckCircleIcon, 
+      label: 'Prescriptions (Month)', 
+      value: stats?.stats?.prescriptions_issued || 0,
+      subtitle: 'This month',
+      icon: ClipboardDocumentCheckIcon, 
       color: 'bg-gradient-to-br from-cyan-500 to-cyan-600',
-      trend: '+15%',
-      link: '/doctor/appointments'
+      link: '/doctor/prescriptions'
     },
   ];
 
@@ -85,17 +100,16 @@ export default function DoctorDashboard() {
         {statCards.map((stat, index) => (
           <Link key={index} to={stat.link}>
             <Card className="animate-scale-in cursor-pointer group" style={{ animationDelay: `${index * 100}ms` }}>
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-3">
                 <div className={`${stat.color} p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-lg`}>
                   <stat.icon className="h-6 w-6 text-white" />
                 </div>
-                <div className="flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                  <ArrowTrendingUpIcon className="h-3 w-3" />
-                  {stat.trend}
-                </div>
               </div>
               <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900 transition-all duration-300 group-hover:scale-105">{stat.value}</p>
+              <p className="text-3xl font-bold text-gray-900 transition-all duration-300 group-hover:scale-105 mb-1">{stat.value}</p>
+              {stat.subtitle && (
+                <p className="text-xs text-gray-500">{stat.subtitle}</p>
+              )}
             </Card>
           </Link>
         ))}
@@ -105,7 +119,7 @@ export default function DoctorDashboard() {
         {/* Today's Schedule */}
         <Card title="Today's Schedule" className="lg:col-span-2 animate-fade-in-up animate-delay-300">
           <div className="space-y-3">
-            {stats?.todaySchedule?.length > 0 ? stats.todaySchedule.map((appointment, index) => (
+            {stats?.todayAppointments?.length > 0 ? stats.todayAppointments.map((appointment, index) => (
               <div 
                 key={appointment.id} 
                 className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 animate-slide-in-right border-l-4 border-blue-500"
