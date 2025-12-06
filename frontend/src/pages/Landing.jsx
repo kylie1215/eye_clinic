@@ -316,7 +316,6 @@ export default function Landing() {
         isOpen={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}
         title="Create Your Account"
-        size="lg"
       >
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="text-center mb-6">
@@ -326,72 +325,53 @@ export default function Landing() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-[#2C3E50]">Eye Clinic</h2>
+            <h2 className="text-xl font-bold text-[#2C3E50]">Eye Clinic</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Full Name"
-              type="text"
-              value={registerData.name}
-              onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-              error={registerErrors.name?.[0]}
-              required
-            />
-
-            <Input
-              label="Email Address"
-              type="email"
-              value={registerData.email}
-              onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-              error={registerErrors.email?.[0]}
-              required
-            />
-
-            <Input
-              label="Phone Number"
-              type="tel"
-              value={registerData.phone}
-              onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
-              error={registerErrors.phone?.[0]}
-            />
-
-            <Input
-              label="Date of Birth"
-              type="date"
-              value={registerData.date_of_birth}
-              onChange={(e) => setRegisterData({ ...registerData, date_of_birth: e.target.value })}
-              error={registerErrors.date_of_birth?.[0]}
-            />
-          </div>
-
+          
           <Input
-            label="Address"
+            label="Full Name"
             type="text"
-            value={registerData.address}
-            onChange={(e) => setRegisterData({ ...registerData, address: e.target.value })}
-            error={registerErrors.address?.[0]}
+            value={registerData.name}
+            onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+            error={registerErrors.name?.[0]}
+            required
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Password"
-              type="password"
-              value={registerData.password}
-              onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-              error={registerErrors.password?.[0]}
-              required
-            />
+          <Input
+            label="Email Address"
+            type="email"
+            value={registerData.email}
+            onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+            error={registerErrors.email?.[0]}
+            required
+          />
 
-            <Input
-              label="Confirm Password"
-              type="password"
-              value={registerData.password_confirmation}
-              onChange={(e) => setRegisterData({ ...registerData, password_confirmation: e.target.value })}
-              required
-            />
-          </div>
+          <Input
+            label="Phone Number"
+            type="tel"
+            value={registerData.phone}
+            onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
+            error={registerErrors.phone?.[0]}
+          />
 
-          <Button type="submit" loading={registerLoading} className="w-full">
+          <Input
+            label="Password"
+            type="password"
+            value={registerData.password}
+            onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+            error={registerErrors.password?.[0]}
+            required
+          />
+
+          <Input
+            label="Confirm Password"
+            type="password"
+            value={registerData.password_confirmation}
+            onChange={(e) => setRegisterData({ ...registerData, password_confirmation: e.target.value })}
+            required
+          />
+
+          <Button type="submit" loading={registerLoading} className="w-full mt-6">
             Create Account
           </Button>
 

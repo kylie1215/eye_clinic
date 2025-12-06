@@ -12,8 +12,6 @@ import ClientLayout from './layouts/ClientLayout';
 
 // Auth Pages
 import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Unauthorized from './pages/Unauthorized';
 import Notifications from './pages/Notifications';
 
@@ -50,10 +48,6 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
-          
-          {/* Guest Routes */}
-          <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Admin Routes */}
