@@ -35,8 +35,11 @@ export default function AuditLogs() {
 
   useEffect(() => {
     fetchLogs();
-    fetchStats();
   }, [pagination.current_page, selectedAction, dateFrom, dateTo, showArchived]);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   const fetchLogs = async () => {
     try {
@@ -51,12 +54,13 @@ export default function AuditLogs() {
       };
       
       const response = await adminAPI.getAuditLogs(params);
-      setLogs(response.data.data);
-      setPagination({
-        current_page: response.data.current_page,
-        last_page: response.data.last_page,
-        total: response.data.total,
-      });
+      console.log('Audit logs response:', response.data);
+      setLogs(response.data.data || []);
+      setPagination(prev => ({
+        current_page: response.data.current_page || 1,
+        last_page: response.data.last_page || 1,
+        total: response.data.total || 0,
+      }));
     } catch (error) {
       console.error('Error fetching logs:', error);
       toast.error('Failed to load audit logs');
@@ -441,7 +445,7 @@ export default function AuditLogs() {
             </div>
 
             {/* Pagination */}
-            {pagination.last_page > 1 && (
+            {logs.length > 0 && (
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-6 border-t border-gray-200">
                 <p className="text-sm text-gray-600">
                   Showing page <span className="font-semibold text-gray-900">{pagination.current_page}</span> of <span className="font-semibold text-gray-900">{pagination.last_page}</span>

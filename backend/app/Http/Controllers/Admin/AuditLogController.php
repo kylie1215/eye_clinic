@@ -49,7 +49,7 @@ class AuditLogController extends Controller
             });
         }
 
-        $logs = $query->paginate(50);
+        $logs = $query->paginate(10);
 
         return response()->json($logs);
     }
