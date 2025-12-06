@@ -11,7 +11,7 @@ use Inertia\Response;
 
 class CartController extends Controller
 {
-    public function index(): Response
+    public function index()
     {
         $client = auth()->user();
 
@@ -27,8 +27,8 @@ class CartController extends Controller
         $shipping = $subtotal > 1000 ? 0 : 100; // Free shipping over 1000
         $total = $subtotal + $tax + $shipping;
 
-        return Inertia::render('Client/Cart/Index', [
-            'cartItems' => $cartItems,
+        return response()->json([
+            'items' => $cartItems,
             'summary' => [
                 'subtotal' => $subtotal,
                 'tax' => $tax,
@@ -50,7 +50,7 @@ class CartController extends Controller
         $product = Product::findOrFail($validated['product_id']);
 
         if (!$product->is_active || $product->stock_quantity < $validated['quantity']) {
-            return redirect()->back()->with('error', 'Product is not available in the requested quantity.');
+            return response()->json(['message' => 'Product is not available in the requested quantity.'], 400);
         }
 
         $cartItem = Cart::where('client_id', $client->id)
@@ -61,7 +61,7 @@ class CartController extends Controller
             $newQuantity = $cartItem->quantity + $validated['quantity'];
             
             if ($product->stock_quantity < $newQuantity) {
-                return redirect()->back()->with('error', 'Not enough stock available.');
+                return response()->json(['message' => 'Not enough stock available.'], 400);
             }
             
             $cartItem->update(['quantity' => $newQuantity]);
@@ -73,14 +73,14 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to cart.');
+        return response()->json(['message' => 'Product added to cart.']);
     }
 
     public function update(Request $request, Cart $cartItem)
     {
         // Ensure client can only update their own cart items
         if ($cartItem->client_id !== auth()->id()) {
-            abort(403);
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $validated = $request->validate([
@@ -88,24 +88,24 @@ class CartController extends Controller
         ]);
 
         if ($cartItem->product->stock_quantity < $validated['quantity']) {
-            return redirect()->back()->with('error', 'Not enough stock available.');
+            return response()->json(['message' => 'Not enough stock available.'], 400);
         }
 
         $cartItem->update($validated);
 
-        return redirect()->back()->with('success', 'Cart updated.');
+        return response()->json(['message' => 'Cart updated.']);
     }
 
     public function remove(Cart $cartItem)
     {
         // Ensure client can only remove their own cart items
         if ($cartItem->client_id !== auth()->id()) {
-            abort(403);
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $cartItem->delete();
 
-        return redirect()->back()->with('success', 'Item removed from cart.');
+        return response()->json(['message' => 'Item removed from cart.']);
     }
 
     public function clear()
@@ -114,6 +114,6 @@ class CartController extends Controller
 
         Cart::where('client_id', $client->id)->delete();
 
-        return redirect()->back()->with('success', 'Cart cleared.');
+        return response()->json(['message' => 'Cart cleared.']);
     }
 }
