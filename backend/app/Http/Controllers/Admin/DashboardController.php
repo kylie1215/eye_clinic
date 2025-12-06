@@ -36,7 +36,7 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
 
-            $recentOrders = Order::with('user:id,name,email')
+            $recentOrders = Order::with('client:id,name,email')
                 ->latest()
                 ->take(5)
                 ->get();

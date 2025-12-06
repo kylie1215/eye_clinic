@@ -27,7 +27,10 @@ export default function AdminDashboard() {
   const fetchDashboard = async () => {
     try {
       const response = await adminAPI.getDashboard();
-      console.log('Dashboard response:', response.data);
+      console.log('Dashboard API Response:', response);
+      console.log('Dashboard data:', response.data);
+      console.log('Stats object:', response.data.stats);
+      console.log('Total users:', response.data.stats?.total_users);
       setStats(response.data);
     } catch (error) {
       console.error('Dashboard error:', error);
@@ -65,77 +68,78 @@ export default function AdminDashboard() {
   const statCards = [
     { 
       label: 'Total Users', 
-      value: stats?.stats?.total_users || 0, 
-      change: '+12.5%',
-      trend: 'up',
+      value: stats?.stats?.total_users || 0,
+      subtitle: `${stats?.stats?.total_doctors || 0} doctors, ${stats?.stats?.total_clients || 0} clients`,
       icon: UsersIcon, 
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       link: '/admin/users'
     },
     { 
       label: 'Total Products', 
-      value: stats?.stats?.total_products || 0, 
-      change: '+5.2%',
-      trend: 'up',
+      value: stats?.stats?.total_products || 0,
+      subtitle: `${stats?.stats?.low_stock_products || 0} low stock`,
       icon: ShoppingBagIcon, 
       color: 'bg-gradient-to-br from-green-500 to-green-600',
       link: '/admin/products'
     },
     { 
       label: 'Total Orders', 
-      value: stats?.stats?.total_orders || 0, 
-      change: (stats?.stats?.total_orders || 0) > 0 ? '+12.4%' : '0%',
-      trend: (stats?.stats?.total_orders || 0) > 0 ? 'up' : 'down',
+      value: stats?.stats?.total_orders || 0,
+      subtitle: `${stats?.stats?.pending_orders || 0} pending`,
       icon: ClipboardDocumentListIcon, 
       color: 'bg-gradient-to-br from-purple-500 to-purple-600',
       link: '/admin/orders'
     },
     { 
       label: 'Appointments', 
-      value: stats?.stats?.total_appointments || 0, 
-      change: (stats?.stats?.total_appointments || 0) > 0 ? '+18.3%' : '0%',
-      trend: (stats?.stats?.total_appointments || 0) > 0 ? 'up' : 'down',
+      value: stats?.stats?.total_appointments || 0,
+      subtitle: `${stats?.stats?.pending_appointments || 0} pending`,
       icon: CalendarIcon, 
       color: 'bg-gradient-to-br from-cyan-500 to-cyan-600',
       link: '/admin/appointments'
     },
   ];
 
-  // Calculate revenue stats from real data
-  const calculateRevenue = () => {
-    const totalRevenue = stats?.stats?.total_revenue || 0;
-    const monthlyRevenue = stats?.stats?.monthly_revenue || 0;
-    return {
-      today: totalRevenue * 0.05,
-      week: totalRevenue * 0.15,
-      month: monthlyRevenue
-    };
-  };
-
-  const revenue = calculateRevenue();
+  // Revenue stats from database
   const revenueStats = [
-    { label: 'Today', value: `₱${revenue.today.toLocaleString(undefined, {maximumFractionDigits: 0})}`, change: '+8%' },
-    { label: 'This Week', value: `₱${revenue.week.toLocaleString(undefined, {maximumFractionDigits: 0})}`, change: '+15%' },
-    { label: 'This Month', value: `₱${revenue.month.toLocaleString(undefined, {maximumFractionDigits: 0})}`, change: '+23%' },
+    { 
+      label: 'Total Revenue', 
+      value: `₱${(stats?.stats?.total_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      subtitle: 'All time'
+    },
+    { 
+      label: 'Monthly Revenue', 
+      value: `₱${(stats?.stats?.monthly_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      subtitle: new Date().toLocaleString('default', { month: 'long', year: 'numeric' })
+    },
+    { 
+      label: 'Avg Order Value', 
+      value: `₱${((stats?.stats?.total_revenue || 0) / (stats?.stats?.total_orders || 1)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      subtitle: 'Per order'
+    },
   ];
 
-  // Calculate top products from recent orders
-  const calculateTopProducts = () => {
-    if (!stats?.recentOrders || stats.recentOrders.length === 0) {
-      return [
-        { name: 'Blue Light Blocking Glasses', sales: 0, revenue: 0, icon: ShoppingBagIcon },
-        { name: 'Aviator Sunglasses', sales: 0, revenue: 0, icon: ShoppingBagIcon },
-        { name: 'Contact Lenses Pack', sales: 0, revenue: 0, icon: ShoppingBagIcon },
-      ];
-    }
-    return [
-      { name: 'Blue Light Blocking Glasses', sales: stats.totalOrders || 0, revenue: stats.totalRevenue || 0, icon: ShoppingBagIcon },
-      { name: 'Top Selling Product', sales: Math.floor((stats.totalOrders || 0) * 0.7), revenue: Math.floor((stats.totalRevenue || 0) * 0.6), icon: ShoppingBagIcon },
-      { name: 'Popular Item', sales: Math.floor((stats.totalOrders || 0) * 0.5), revenue: Math.floor((stats.totalRevenue || 0) * 0.4), icon: ShoppingBagIcon },
-    ];
-  };
-
-  const topProducts = calculateTopProducts();
+  // Quick stats for display
+  const quickStats = [
+    { 
+      label: 'Total Orders', 
+      value: stats?.stats?.total_orders || 0,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
+    },
+    { 
+      label: 'Pending Orders', 
+      value: stats?.stats?.pending_orders || 0,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100'
+    },
+    { 
+      label: 'Low Stock Items', 
+      value: stats?.stats?.low_stock_products || 0,
+      color: 'text-red-600',
+      bgColor: 'bg-red-100'
+    },
+  ];
 
   // Generate recent activity from real data
   const generateRecentActivity = () => {
@@ -191,23 +195,16 @@ export default function AdminDashboard() {
         {statCards.map((stat, index) => (
           <Link key={index} to={stat.link}>
             <Card className="animate-scale-in cursor-pointer group" style={{ animationDelay: `${index * 100}ms` }}>
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-3">
                 <div className={`${stat.color} p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-lg`}>
                   <stat.icon className="h-6 w-6 text-white" />
                 </div>
-                <div className={`flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-full ${
-                  stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}>
-                  {stat.trend === 'up' ? (
-                    <ArrowTrendingUpIcon className="h-4 w-4" />
-                  ) : (
-                    <ArrowTrendingDownIcon className="h-4 w-4" />
-                  )}
-                  {stat.change}
-                </div>
               </div>
               <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900 transition-all duration-300 group-hover:scale-105">{stat.value}</p>
+              <p className="text-3xl font-bold text-gray-900 transition-all duration-300 group-hover:scale-105 mb-1">{stat.value}</p>
+              {stat.subtitle && (
+                <p className="text-xs text-gray-500">{stat.subtitle}</p>
+              )}
             </Card>
           </Link>
         ))}
@@ -227,38 +224,45 @@ export default function AdminDashboard() {
                 <CurrencyDollarIcon className="h-5 w-5 text-[#1ABC9C]" />
               </div>
               <p className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
+              {stat.subtitle && (
+                <p className="text-xs text-gray-500">{stat.subtitle}</p>
+              )}
               <p className="text-sm text-green-600 font-semibold">{stat.change} from last period</p>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* Top Products & Quick Stats */}
+      {/* Quick Stats & System Status */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <Card title="Top Products" className="lg:col-span-2 animate-fade-in-up animate-delay-200">
-          <div className="space-y-3">
-            {topProducts.map((product, index) => (
+        <Card title="System Overview" className="lg:col-span-2 animate-fade-in-up animate-delay-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {quickStats.map((stat, index) => (
               <div 
                 key={index} 
-                className="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 animate-slide-in-right"
+                className="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 animate-scale-in"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="bg-gradient-to-br from-[#1ABC9C] to-[#16A085] p-3 rounded-xl">
-                  <product.icon className="h-6 w-6 text-white" />
+                <div className={`${stat.bgColor} p-3 rounded-xl`}>
+                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
                 </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-900">{product.name}</p>
-                  <p className="text-sm text-gray-500">{product.sales} units sold</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-green-600">₱{product.revenue.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">Revenue</p>
+                <div>
+                  <p className="text-sm font-medium text-gray-700">{stat.label}</p>
                 </div>
               </div>
             ))}
-            <Link to="/admin/products" className="block text-center mt-4 text-[#1ABC9C] hover:text-[#16A085] font-medium">
-              View All Products →
-            </Link>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Revenue</p>
+                <p className="text-xl font-bold text-gray-900">₱{(stats?.stats?.total_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+              </div>
+              <Link to="/admin/reports" className="text-[#1ABC9C] hover:text-[#16A085] font-medium text-sm flex items-center gap-1">
+                <ChartBarIcon className="h-4 w-4" />
+                View Reports →
+              </Link>
+            </div>
           </div>
         </Card>
 
