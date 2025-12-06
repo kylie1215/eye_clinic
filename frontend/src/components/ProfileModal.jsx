@@ -102,9 +102,9 @@ export default function ProfileModal({ isOpen, onClose }) {
       return;
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Image size must be less than 2MB');
+    // Validate file size (max 200MB)
+    if (file.size > 200 * 1024 * 1024) {
+      toast.error('Image size must be less than 200MB');
       return;
     }
 
@@ -191,7 +191,7 @@ export default function ProfileModal({ isOpen, onClose }) {
             />
           </div>
           <p className="mt-3 text-gray-600 text-sm">Click the camera icon to upload</p>
-          <p className="text-gray-500 text-xs">Max size: 2MB</p>
+          <p className="text-gray-500 text-xs">Max size: 200MB</p>
         </div>
 
         {/* Profile Form */}

@@ -86,7 +86,7 @@ class ProfileController extends Controller
         }
 
         $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // 2MB max
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:204800', // 200MB max
         ]);
 
         $user = $request->user();
