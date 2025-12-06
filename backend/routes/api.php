@@ -64,6 +64,14 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     
     // Reports API
     Route::get('reports', [Admin\ReportController::class, 'index']);
+    
+    // Audit Logs API
+    Route::get('audit-logs', [Admin\AuditLogController::class, 'index']);
+    Route::get('audit-logs/stats', [Admin\AuditLogController::class, 'stats']);
+    Route::get('audit-logs/{auditLog}', [Admin\AuditLogController::class, 'show']);
+    Route::patch('audit-logs/{auditLog}/archive', [Admin\AuditLogController::class, 'archive']);
+    Route::patch('audit-logs/{auditLog}/unarchive', [Admin\AuditLogController::class, 'unarchive']);
+    Route::post('audit-logs/bulk-archive', [Admin\AuditLogController::class, 'bulkArchive']);
 });
 
 // Doctor API Routes

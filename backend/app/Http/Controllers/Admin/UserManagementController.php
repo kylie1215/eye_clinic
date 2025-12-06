@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -51,6 +52,9 @@ class UserManagementController extends Controller
         $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
+
+        // Log the action
+        AuditLog::log('create', "Created user: {$user->name} ({$user->email})", $user, null, $validated);
 
         return response()->json([
             'message' => 'User created successfully.',

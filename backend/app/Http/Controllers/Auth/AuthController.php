@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -28,6 +29,15 @@ class AuthController extends Controller
 
         // Create token
         $token = $user->createToken('auth-token')->plainTextToken;
+
+        // Log the login
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'login',
+            'description' => "User {$user->name} logged in",
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json([
             'user' => $user,
@@ -59,6 +69,17 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
+        // Log the registration
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'register',
+            'description' => "New user {$user->name} registered",
+            'model_type' => User::class,
+            'model_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return response()->json([
             'user' => $user,
             'token' => $token,
@@ -67,6 +88,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = $request->user();
+        
+        // Log the logout
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'logout',
+            'description' => "User {$user->name} logged out",
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);

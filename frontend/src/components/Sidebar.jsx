@@ -42,7 +42,12 @@ export default function Sidebar({ menuItems, isOpen, onClose }) {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <span className="transition-transform duration-300 group-hover:scale-110">{item.icon}</span>
-              <span className="font-medium">{item.label}</span>
+              <span className="font-medium flex-1">{item.label}</span>
+              {item.badge > 0 && (
+                <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                  {item.badge > 99 ? '99+' : item.badge}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

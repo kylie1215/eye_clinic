@@ -24,6 +24,7 @@ import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
 import AdminAppointments from './pages/admin/Appointments';
 import AdminReports from './pages/admin/Reports';
+import AdminAuditLogs from './pages/admin/AuditLogs';
 
 // Doctor Pages
 import DoctorDashboard from './pages/doctor/Dashboard';
@@ -70,6 +71,7 @@ function App() {
             <Route path="orders" element={<AdminOrders />} />
             <Route path="appointments" element={<AdminAppointments />} />
             <Route path="reports" element={<AdminReports />} />
+            <Route path="audit-logs" element={<AdminAuditLogs />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
           </Route>

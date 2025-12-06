@@ -40,6 +40,14 @@ export const adminAPI = {
   
   // Reports
   getReports: () => api.get('/api/admin/reports'),
+  
+  // Audit Logs
+  getAuditLogs: (params) => api.get('/api/admin/audit-logs', { params }),
+  getAuditLogStats: () => api.get('/api/admin/audit-logs/stats'),
+  getAuditLog: (id) => api.get(`/api/admin/audit-logs/${id}`),
+  archiveAuditLog: (id) => api.patch(`/api/admin/audit-logs/${id}/archive`),
+  unarchiveAuditLog: (id) => api.patch(`/api/admin/audit-logs/${id}/unarchive`),
+  bulkArchiveAuditLogs: (ids) => api.post('/api/admin/audit-logs/bulk-archive', { ids }),
 };
 
 // Doctor APIs
