@@ -442,24 +442,86 @@ export default function AuditLogs() {
 
             {/* Pagination */}
             {pagination.last_page > 1 && (
-              <div className="flex justify-between items-center mt-6 pt-6 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-6 border-t border-gray-200">
                 <p className="text-sm text-gray-600">
-                  Showing page {pagination.current_page} of {pagination.last_page}
+                  Showing page <span className="font-semibold text-gray-900">{pagination.current_page}</span> of <span className="font-semibold text-gray-900">{pagination.last_page}</span>
+                  {pagination.total && (
+                    <span className="text-gray-500"> ({pagination.total} total logs)</span>
+                  )}
                 </p>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
+                  {/* First Page */}
+                  <button
+                    onClick={() => setPagination({ ...pagination, current_page: 1 })}
+                    disabled={pagination.current_page === 1}
+                    className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    title="First Page"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Previous */}
                   <button
                     onClick={() => setPagination({ ...pagination, current_page: pagination.current_page - 1 })}
                     disabled={pagination.current_page === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex gap-1">
+                    {(() => {
+                      const pages = [];
+                      const maxVisible = 5;
+                      let startPage = Math.max(1, pagination.current_page - Math.floor(maxVisible / 2));
+                      let endPage = Math.min(pagination.last_page, startPage + maxVisible - 1);
+
+                      if (endPage - startPage + 1 < maxVisible) {
+                        startPage = Math.max(1, endPage - maxVisible + 1);
+                      }
+
+                      for (let i = startPage; i <= endPage; i++) {
+                        pages.push(
+                          <button
+                            key={i}
+                            onClick={() => setPagination({ ...pagination, current_page: i })}
+                            className={`px-3 py-2 rounded-lg transition-colors ${
+                              i === pagination.current_page
+                                ? 'bg-[#1ABC9C] text-white font-semibold'
+                                : 'border border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            {i}
+                          </button>
+                        );
+                      }
+
+                      return pages;
+                    })()}
+                  </div>
+
+                  {/* Next */}
                   <button
                     onClick={() => setPagination({ ...pagination, current_page: pagination.current_page + 1 })}
                     disabled={pagination.current_page === pagination.last_page}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
+                  </button>
+
+                  {/* Last Page */}
+                  <button
+                    onClick={() => setPagination({ ...pagination, current_page: pagination.last_page })}
+                    disabled={pagination.current_page === pagination.last_page}
+                    className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    title="Last Page"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
                   </button>
                 </div>
               </div>
